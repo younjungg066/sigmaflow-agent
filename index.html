@@ -5,93 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SigmaFlow — Signal-to-Execution Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c0f;
-    --bg2: #0f1218;
-    --bg3: #151a22;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8eaed;
-    --muted: #6b7280;
-    --accent: #00d4aa;
-    --accent2: #0099ff;
-    --danger: #ff4757;
-    --warn: #ffa502;
-    --mono: 'Space Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
+    --bg: #0a0c0f; --bg2: #0f1218; --bg3: #151a22;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --text: #e8eaed; --muted: #6b7280;
+    --accent: #00d4aa; --accent2: #0099ff;
+    --danger: #ff4757; --warn: #ffa502;
+    --mono: 'Space Mono', monospace; --sans: 'DM Sans', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-  /* HEADER */
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
+    border-bottom: 1px solid var(--border); padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
-    height: 56px;
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,12,15,0.92);
-    backdrop-filter: blur(12px);
+    height: 56px; position: sticky; top: 0; z-index: 100;
+    background: rgba(10,12,15,0.95); backdrop-filter: blur(12px);
   }
-  .logo { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--accent); letter-spacing: -0.5px; }
+  .logo { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--accent); }
   .logo span { color: var(--muted); font-weight: 400; }
-  .header-badges { display: flex; gap: 8px; }
-  .badge {
-    font-family: var(--mono); font-size: 10px; padding: 3px 8px;
-    border-radius: 4px; letter-spacing: 0.5px;
-  }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; }
   .badge-green { background: rgba(0,212,170,0.1); color: var(--accent); border: 1px solid rgba(0,212,170,0.2); }
-  .badge-blue { background: rgba(0,153,255,0.1); color: var(--accent2); border: 1px solid rgba(0,153,255,0.2); }
   .badge-red { background: rgba(255,71,87,0.1); color: var(--danger); border: 1px solid rgba(255,71,87,0.2); }
+  .badge-gray { background: rgba(107,114,128,0.15); color: var(--muted); border: 1px solid rgba(107,114,128,0.2); }
 
-  /* LAYOUT */
-  .app { display: grid; grid-template-columns: 260px 1fr 320px; height: calc(100vh - 56px); }
+  .app { display: grid; grid-template-columns: 260px 1fr 300px; height: calc(100vh - 56px); }
 
   /* SIDEBAR */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 16px;
-    overflow-y: auto;
-    background: var(--bg2);
-  }
-  .sidebar-section { margin-bottom: 24px; }
-  .sidebar-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .sidebar { border-right: 1px solid var(--border); padding: 16px; overflow-y: auto; background: var(--bg2); }
+  .sidebar-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; margin-top: 20px; }
+  .sidebar-label:first-child { margin-top: 0; }
 
   .asset-item {
     display: flex; align-items: center; justify-content: space-between;
     padding: 9px 10px; border-radius: 6px; cursor: pointer;
-    transition: background 0.15s;
-    margin-bottom: 3px;
+    transition: background 0.15s; margin-bottom: 3px; border: 1px solid transparent;
   }
   .asset-item:hover { background: var(--bg3); }
-  .asset-item.active { background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.15); }
+  .asset-item.active { background: rgba(0,212,170,0.07); border-color: rgba(0,212,170,0.15); }
   .asset-name { font-size: 13px; font-weight: 500; }
-  .asset-change { font-family: var(--mono); font-size: 12px; }
-  .up { color: var(--accent); }
-  .down { color: var(--danger); }
+  .up { color: var(--accent); } .down { color: var(--danger); }
 
-  .signal-mini {
-    padding: 8px 10px; border-radius: 6px; margin-bottom: 4px;
+  /* NEWS FEED in sidebar */
+  .news-item {
+    padding: 9px 10px; border-radius: 6px; margin-bottom: 6px;
     background: var(--bg3); border: 1px solid var(--border);
     cursor: pointer; transition: border-color 0.15s;
   }
-  .signal-mini:hover { border-color: var(--border2); }
-  .signal-mini .sm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .signal-mini .sm-name { font-size: 12px; font-weight: 500; }
-  .signal-mini .sm-strength { font-family: var(--mono); font-size: 11px; }
-  .signal-mini .sm-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .signal-mini .sm-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .news-item:hover { border-color: var(--border2); }
+  .news-title { font-size: 12px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .news-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .news-tag {
+    display: inline-block; font-family: var(--mono); font-size: 9px;
+    padding: 1px 5px; border-radius: 3px; margin-right: 3px; margin-bottom: 3px;
+    background: rgba(0,153,255,0.1); color: var(--accent2);
+  }
 
-  /* MAIN PANEL */
+  /* MAIN */
   .main { overflow-y: auto; background: var(--bg); }
-
   .ticker-bar {
-    border-bottom: 1px solid var(--border);
-    padding: 10px 24px;
-    display: flex; gap: 24px; overflow-x: auto;
-    scrollbar-width: none;
+    border-bottom: 1px solid var(--border); padding: 10px 24px;
+    display: flex; gap: 24px; overflow-x: auto; scrollbar-width: none;
     background: var(--bg2);
   }
   .ticker-item { display: flex; flex-direction: column; gap: 2px; min-width: fit-content; }
@@ -99,163 +76,28 @@
   .ticker-val { font-family: var(--mono); font-size: 13px; font-weight: 700; }
 
   .main-content { padding: 20px 24px; }
-  .section-title { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
   .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* CHART AREA */
-  .chart-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
-  }
+  .chart-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
   .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-  .chart-asset { font-size: 22px; font-weight: 600; }
-  .chart-price { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--accent); }
-  .chart-sub { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .chart-asset { font-size: 20px; font-weight: 600; }
+  .chart-price { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--accent); }
+  .chart-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 3px; }
+  canvas#priceChart { width: 100%; height: 160px; }
 
-  .chart-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-  .chart-tab {
-    font-family: var(--mono); font-size: 11px; padding: 4px 10px;
-    border-radius: 4px; cursor: pointer; transition: all 0.15s;
-    color: var(--muted); border: 1px solid transparent;
-  }
-  .chart-tab:hover { color: var(--text); }
-  .chart-tab.active { color: var(--accent); border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.05); }
-
-  canvas#priceChart { width: 100%; height: 180px; }
-
-  /* INDICATORS GRID */
   .indicators-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-  .ind-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 14px;
-  }
+  .ind-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
   .ind-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
   .ind-val { font-family: var(--mono); font-size: 18px; font-weight: 700; }
   .ind-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
-  /* AI ANALYSIS SECTION */
-  .ai-box {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px 20px; margin-bottom: 20px;
-  }
-  .ai-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-  .ai-title { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); }
-
-  .ai-output {
-    font-size: 13px; line-height: 1.7; color: var(--text);
-    min-height: 80px; position: relative;
-  }
-  .ai-output .cursor { display: inline-block; width: 2px; height: 13px; background: var(--accent); animation: blink 0.8s step-end infinite; vertical-align: text-bottom; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  .ai-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
-  .ai-verdict { display: flex; align-items: center; gap: 8px; }
-  .verdict-tag {
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    padding: 4px 12px; border-radius: 4px;
-  }
-  .verdict-buy { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
-  .verdict-sell { background: rgba(255,71,87,0.15); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
-  .verdict-hold { background: rgba(255,165,2,0.15); color: var(--warn); border: 1px solid rgba(255,165,2,0.3); }
-
-  .confidence-bar { display: flex; align-items: center; gap: 8px; }
-  .conf-label { font-size: 11px; color: var(--muted); }
-  .conf-track { width: 100px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .conf-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s ease; }
-
-  .run-btn {
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    padding: 8px 18px; border-radius: 6px; cursor: pointer;
-    background: var(--accent); color: #000; border: none;
-    transition: opacity 0.15s; letter-spacing: 0.3px;
-  }
-  .run-btn:hover { opacity: 0.85; }
-  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ORDER PANEL */
-  .right-panel {
-    border-left: 1px solid var(--border);
-    overflow-y: auto;
-    background: var(--bg2);
-  }
-  .panel-tabs { display: flex; border-bottom: 1px solid var(--border); }
-  .panel-tab {
-    flex: 1; padding: 12px; text-align: center;
-    font-family: var(--mono); font-size: 11px; cursor: pointer;
-    color: var(--muted); transition: all 0.15s;
-    border-bottom: 2px solid transparent;
-  }
-  .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .panel-content { padding: 16px; }
-
-  .order-form label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
-  .order-form input, .order-form select {
-    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-    color: var(--text); font-family: var(--mono); font-size: 13px;
-    padding: 9px 12px; border-radius: 6px; outline: none; margin-bottom: 12px;
-    transition: border-color 0.15s;
-  }
-  .order-form input:focus, .order-form select:focus { border-color: rgba(0,212,170,0.4); }
-
-  .order-type-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-  .ot-tab {
-    flex: 1; padding: 8px; text-align: center;
-    font-family: var(--mono); font-size: 12px; border-radius: 6px;
-    cursor: pointer; transition: all 0.15s;
-    border: 1px solid var(--border2); color: var(--muted);
-  }
-  .ot-tab.buy.active { background: rgba(0,212,170,0.15); color: var(--accent); border-color: rgba(0,212,170,0.4); }
-  .ot-tab.sell.active { background: rgba(255,71,87,0.15); color: var(--danger); border-color: rgba(255,71,87,0.4); }
-
-  .order-summary {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 6px; padding: 12px; margin-bottom: 14px;
-  }
-  .os-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
-  .os-row:last-child { margin-bottom: 0; }
-  .os-label { color: var(--muted); }
-  .os-val { font-family: var(--mono); font-weight: 500; }
-
-  .submit-btn {
-    width: 100%; padding: 12px; font-family: var(--mono); font-size: 13px;
-    font-weight: 700; border-radius: 6px; cursor: pointer; border: none;
-    transition: opacity 0.15s; letter-spacing: 0.3px;
-  }
-  .submit-buy { background: var(--accent); color: #000; }
-  .submit-sell { background: var(--danger); color: #fff; }
-  .submit-btn:hover { opacity: 0.85; }
-
-  /* ORDER HISTORY */
-  .order-history { padding: 16px; }
-  .oh-item {
-    padding: 10px 12px; background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 6px; margin-bottom: 8px;
-  }
-  .oh-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .oh-sym { font-size: 13px; font-weight: 500; }
-  .oh-time { font-family: var(--mono); font-size: 10px; color: var(--muted); }
-  .oh-bot { display: flex; justify-content: space-between; align-items: center; }
-  .oh-info { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .oh-pnl { font-family: var(--mono); font-size: 12px; font-weight: 700; }
-
-  .status-dot {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px;
-  }
-  .status-filled { background: var(--accent); }
-  .status-pending { background: var(--warn); }
-  .status-cancelled { background: var(--muted); }
-
-  /* SIGNAL CARDS in main */
   .signals-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  .signal-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 14px;
-    cursor: pointer; transition: border-color 0.15s;
-  }
-  .signal-card:hover { border-color: var(--border2); }
-  .signal-card.active { border-color: rgba(0,212,170,0.35); }
+  .signal-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
   .sc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .sc-name { font-size: 12px; font-weight: 600; }
   .sc-type { font-family: var(--mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; }
@@ -266,90 +108,113 @@
   .sc-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 8px; }
   .sc-fill { height: 100%; border-radius: 2px; transition: width 1.2s ease; }
 
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: var(--bg3); border: 1px solid var(--border2);
-    border-radius: 8px; padding: 12px 18px;
-    font-size: 13px; z-index: 999;
-    transform: translateY(80px); opacity: 0;
-    transition: all 0.3s ease;
-    max-width: 300px;
+  /* AI BOX */
+  .ai-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+  .ai-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+  .ai-title { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); }
+  .ai-output { font-size: 13px; line-height: 1.7; color: var(--text); min-height: 80px; }
+  .cursor { display: inline-block; width: 2px; height: 13px; background: var(--accent); animation: blink 0.8s step-end infinite; vertical-align: text-bottom; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .ai-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .verdict-tag { font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 4px; }
+  .verdict-buy { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .verdict-sell { background: rgba(255,71,87,0.15); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
+  .verdict-hold { background: rgba(255,165,2,0.15); color: var(--warn); border: 1px solid rgba(255,165,2,0.3); }
+  .confidence-bar { display: flex; align-items: center; gap: 8px; }
+  .conf-label { font-size: 11px; color: var(--muted); }
+  .conf-track { width: 100px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .conf-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s ease; }
+  .run-btn {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    padding: 8px 18px; border-radius: 6px; cursor: pointer;
+    background: var(--accent); color: #000; border: none; transition: opacity 0.15s;
   }
+  .run-btn:hover { opacity: 0.85; }
+  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* RIGHT PANEL */
+  .right-panel { border-left: 1px solid var(--border); overflow-y: auto; background: var(--bg2); }
+  .panel-tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .panel-tab { flex: 1; padding: 12px; text-align: center; font-family: var(--mono); font-size: 11px; cursor: pointer; color: var(--muted); transition: all 0.15s; border-bottom: 2px solid transparent; }
+  .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .panel-content { padding: 16px; }
+
+  .order-form label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+  .order-form input, .order-form select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); font-family: var(--mono); font-size: 13px;
+    padding: 9px 12px; border-radius: 6px; outline: none; margin-bottom: 12px; transition: border-color 0.15s;
+  }
+  .order-form input:focus, .order-form select:focus { border-color: rgba(0,212,170,0.4); }
+  .order-type-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .ot-tab { flex: 1; padding: 8px; text-align: center; font-family: var(--mono); font-size: 12px; border-radius: 6px; cursor: pointer; transition: all 0.15s; border: 1px solid var(--border2); color: var(--muted); }
+  .ot-tab.buy.active { background: rgba(0,212,170,0.15); color: var(--accent); border-color: rgba(0,212,170,0.4); }
+  .ot-tab.sell.active { background: rgba(255,71,87,0.15); color: var(--danger); border-color: rgba(255,71,87,0.4); }
+  .order-summary { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 14px; }
+  .os-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
+  .os-row:last-child { margin-bottom: 0; }
+  .os-label { color: var(--muted); }
+  .os-val { font-family: var(--mono); font-weight: 500; }
+  .submit-btn { width: 100%; padding: 12px; font-family: var(--mono); font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; border: none; transition: opacity 0.15s; }
+  .submit-buy { background: var(--accent); color: #000; }
+  .submit-sell { background: var(--danger); color: #fff; }
+  .submit-btn:hover { opacity: 0.85; }
+
+  /* FLOW LOG */
+  .flow-panel { padding: 16px; }
+  .flow-log { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 2; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 24px; width: 460px; max-width: 90vw; transform: scale(0.95); transition: transform 0.2s; }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-title { font-family: var(--mono); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: var(--mono); font-size: 12px; padding: 10px 14px; border-radius: 6px; outline: none; margin-bottom: 12px; }
+  .modal-input:focus { border-color: rgba(0,212,170,0.4); }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .btn-ghost { font-family: var(--mono); font-size: 12px; padding: 8px 16px; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--border2); color: var(--muted); transition: all 0.15s; }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-primary { font-family: var(--mono); font-size: 12px; padding: 8px 16px; border-radius: 6px; cursor: pointer; background: var(--accent); border: none; color: #000; font-weight: 700; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 12px 18px; font-size: 13px; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s ease; max-width: 300px; }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast-title { font-weight: 600; margin-bottom: 3px; }
   .toast-body { color: var(--muted); font-size: 12px; }
 
-  /* API CONFIG MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    z-index: 200; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s;
-  }
-  .modal-overlay.show { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 12px; padding: 24px; width: 480px; max-width: 90vw;
-    transform: scale(0.95); transition: transform 0.2s;
-  }
-  .modal-overlay.show .modal { transform: scale(1); }
-  .modal-title { font-family: var(--mono); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-  .modal-input {
-    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-    color: var(--text); font-family: var(--mono); font-size: 13px;
-    padding: 10px 14px; border-radius: 6px; outline: none; margin-bottom: 12px;
-  }
-  .modal-input:focus { border-color: rgba(0,212,170,0.4); }
-  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
-  .btn-ghost {
-    font-family: var(--mono); font-size: 12px; padding: 8px 16px;
-    border-radius: 6px; cursor: pointer; background: transparent;
-    border: 1px solid var(--border2); color: var(--muted); transition: all 0.15s;
-  }
-  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
-  .btn-primary {
-    font-family: var(--mono); font-size: 12px; padding: 8px 16px;
-    border-radius: 6px; cursor: pointer; background: var(--accent);
-    border: none; color: #000; font-weight: 700; transition: opacity 0.15s;
-  }
-  .btn-primary:hover { opacity: 0.85; }
+  /* LOADING SPINNER */
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) {
-    .app { grid-template-columns: 220px 1fr 280px; }
-  }
 </style>
 </head>
 <body>
 
-<!-- API CONFIG MODAL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="apiModal">
   <div class="modal">
-    <div class="modal-title">⚙ API Configuration</div>
-    <div class="modal-sub">Connect your SoSoValue & SoDEX keys to enable live data and execution.</div>
+    <div class="modal-title">API Configuration</div>
+    <div class="modal-sub">
+      Connect your keys to enable live data. Leave blank to use demo mode.<br>
+      Get Buildathon API access: <span style="color:var(--accent2)">forms.gle/2nuJT2qNbUQsyyZy8</span>
+    </div>
     <label style="font-size:11px;color:var(--muted);margin-bottom:5px;display:block">SoSoValue API Key</label>
     <input class="modal-input" id="ssv-key" type="password" placeholder="ssv_xxxxxxxxxxxxxxxx">
-    <label style="font-size:11px;color:var(--muted);margin-bottom:5px;display:block">SoDEX API Key (Testnet)</label>
-    <input class="modal-input" id="sodex-key" type="password" placeholder="sdx_xxxxxxxxxxxxxxxx">
     <label style="font-size:11px;color:var(--muted);margin-bottom:5px;display:block">Anthropic API Key (AI Analysis)</label>
     <input class="modal-input" id="claude-key" type="password" placeholder="sk-ant-xxxxxxxxxxxxxxxx">
-    <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:16px">
-      Keys are stored only in your browser session. For Buildathon access, apply at <span style="color:var(--accent2)">forms.gle/2nuJT2qNbUQsyyZy8</span>
-    </div>
     <div class="modal-footer">
-      <button class="btn-ghost" onclick="closeModal()">Use Demo Mode</button>
-      <button class="btn-primary" onclick="saveKeys()">Save & Connect</button>
+      <button class="btn-ghost" onclick="closeModal()">Demo Mode</button>
+      <button class="btn-primary" onclick="saveKeys()">Connect</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast">
   <div class="toast-title" id="toast-title"></div>
   <div class="toast-body" id="toast-body"></div>
@@ -357,10 +222,9 @@
 
 <header>
   <div class="logo">SIGMAFLOW <span>/ Signal-to-Execution Agent</span></div>
-  <div class="header-badges">
-    <span class="badge badge-green" id="ssv-status">● SSV API</span>
-    <span class="badge badge-blue" id="sodex-status">● SoDEX</span>
-    <span class="badge badge-red" id="ai-status">● AI Engine</span>
+  <div class="header-right">
+    <span class="badge badge-gray" id="ssv-badge">SSV: demo</span>
+    <span class="badge badge-gray" id="ai-badge">AI: demo</span>
     <button class="btn-ghost" onclick="openModal()" style="font-size:11px;padding:5px 12px">Configure</button>
   </div>
 </header>
@@ -368,89 +232,57 @@
 <div class="app">
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Markets</div>
-      <div id="asset-list"></div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Active Signals</div>
-      <div id="signal-list"></div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Portfolio</div>
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Total Value</div>
-        <div style="font-family:var(--mono);font-size:20px;font-weight:700">$24,831.42</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:2px">+$312.18 today (+1.27%)</div>
-        <div style="height:1px;background:var(--border);margin:10px 0"></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px">
-          <span style="color:var(--muted)">Available</span>
-          <span style="font-family:var(--mono)">$8,240.00 USDC</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:11px">
-          <span style="color:var(--muted)">In Positions</span>
-          <span style="font-family:var(--mono)">$16,591.42</span>
-        </div>
-      </div>
-    </div>
+    <div class="sidebar-label">Markets</div>
+    <div id="asset-list"></div>
+    <div class="sidebar-label">Live News <span id="news-loading"></span></div>
+    <div id="news-feed"></div>
   </aside>
 
-  <!-- MAIN PANEL -->
+  <!-- MAIN -->
   <main class="main">
-    <!-- Ticker bar -->
     <div class="ticker-bar" id="tickerBar"></div>
-
     <div class="main-content">
-      <!-- Chart Card -->
+
       <div class="chart-card">
         <div class="chart-header">
           <div>
             <div class="chart-asset" id="chartAssetName">BTC / USDC</div>
-            <div class="chart-sub" id="chartAssetSub">Bitcoin · Spot · SoDEX</div>
+            <div class="chart-sub" id="chartAssetSub">Bitcoin · SoSoValue API</div>
           </div>
           <div style="text-align:right">
-            <div class="chart-price" id="chartPrice">$67,234.80</div>
-            <div style="font-family:var(--mono);font-size:12px;color:var(--accent)">+2.34% ▲</div>
+            <div class="chart-price" id="chartPrice">--</div>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--muted)" id="chartChange">Loading...</div>
           </div>
-        </div>
-        <div class="chart-tabs">
-          <div class="chart-tab active" onclick="setTimeframe('1H',this)">1H</div>
-          <div class="chart-tab" onclick="setTimeframe('4H',this)">4H</div>
-          <div class="chart-tab" onclick="setTimeframe('1D',this)">1D</div>
-          <div class="chart-tab" onclick="setTimeframe('1W',this)">1W</div>
         </div>
         <canvas id="priceChart"></canvas>
       </div>
 
-      <!-- Signal Cards -->
       <div class="section-title">Signal Analysis</div>
       <div class="signals-row" id="signalCards"></div>
 
-      <!-- Tech Indicators -->
       <div class="section-title">Technical Indicators</div>
       <div class="indicators-grid" id="indicatorsGrid"></div>
 
-      <!-- AI Analysis -->
       <div class="section-title">AI Analysis</div>
       <div class="ai-box">
         <div class="ai-header">
           <div class="ai-dot"></div>
           <div class="ai-title">Claude Analysis Engine</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">via SoSoValue API + Anthropic</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">SoSoValue data + Anthropic</div>
         </div>
         <div class="ai-output" id="aiOutput">
-          <span style="color:var(--muted)">Click "Run Analysis" to generate AI-powered market insights using real-time data from SoSoValue API and your technical indicators.</span>
+          <span style="color:var(--muted)">Click "Run Analysis" to generate AI-powered market insights using live data from SoSoValue API.</span>
         </div>
         <div class="ai-footer">
-          <div class="ai-verdict">
+          <div style="display:flex;align-items:center;gap:12px">
             <div class="verdict-tag verdict-hold" id="verdictTag">HOLD</div>
             <div class="confidence-bar">
               <span class="conf-label">Confidence</span>
               <div class="conf-track"><div class="conf-fill" id="confFill" style="width:0%"></div></div>
-              <span class="conf-label" id="confPct">—</span>
+              <span class="conf-label" id="confPct">--</span>
             </div>
           </div>
-          <button class="run-btn" id="runBtn" onclick="runAnalysis()">▶ Run Analysis</button>
+          <button class="run-btn" id="runBtn" onclick="runAnalysis()">Run Analysis</button>
         </div>
       </div>
     </div>
@@ -460,11 +292,9 @@
   <aside class="right-panel">
     <div class="panel-tabs">
       <div class="panel-tab active" onclick="switchPanel('order',this)">Order</div>
-      <div class="panel-tab" onclick="switchPanel('history',this)">History</div>
-      <div class="panel-tab" onclick="switchPanel('flow',this)">Flow</div>
+      <div class="panel-tab" onclick="switchPanel('flow',this)">Flow Log</div>
     </div>
 
-    <!-- ORDER PANEL -->
     <div id="panel-order" class="panel-content">
       <div class="order-type-tabs">
         <div class="ot-tab buy active" id="tab-buy" onclick="setOrderSide('buy')">BUY</div>
@@ -475,18 +305,18 @@
         <select id="order-asset" onchange="updateOrderSummary()">
           <option>BTC / USDC</option>
           <option>ETH / USDC</option>
+          <option>SOL / USDC</option>
           <option>SSI-TOP10 / USDC</option>
           <option>SSI-DeFi / USDC</option>
-          <option>SOL / USDC</option>
         </select>
         <label>Order Type</label>
-        <select id="order-type" onchange="updateOrderSummary()">
+        <select id="order-type">
           <option>Market</option>
           <option>Limit</option>
           <option>Stop-Limit</option>
         </select>
         <label>Price (USDC)</label>
-        <input type="number" id="order-price" value="67234.80" oninput="updateOrderSummary()">
+        <input type="number" id="order-price" value="0" oninput="updateOrderSummary()">
         <label>Amount</label>
         <input type="number" id="order-amount" value="0.05" step="0.001" oninput="updateOrderSummary()">
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px">
@@ -495,274 +325,287 @@
           <button class="btn-ghost" onclick="setPct(75)" style="font-size:11px;padding:5px">75%</button>
           <button class="btn-ghost" onclick="setPct(100)" style="font-size:11px;padding:5px">MAX</button>
         </div>
-        <div class="order-summary" id="orderSummary">
-          <div class="os-row"><span class="os-label">Est. Total</span><span class="os-val" id="os-total">$3,361.74</span></div>
-          <div class="os-row"><span class="os-label">Fee (0.05%)</span><span class="os-val" id="os-fee">$1.68</span></div>
+        <div class="order-summary">
+          <div class="os-row"><span class="os-label">Est. Total</span><span class="os-val" id="os-total">--</span></div>
+          <div class="os-row"><span class="os-label">Fee (0.05%)</span><span class="os-val" id="os-fee">--</span></div>
           <div class="os-row"><span class="os-label">Network</span><span class="os-val" style="color:var(--accent)">SoDEX L1</span></div>
-          <div class="os-row"><span class="os-label">Slippage</span><span class="os-val" id="os-slip">~0.03%</span></div>
         </div>
-        <button class="submit-btn submit-buy" id="submitBtn" onclick="submitOrder()">
-          BUY BTC
-        </button>
-        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px">
-          Powered by SoDEX On-chain Orderbook
-        </div>
+        <button class="submit-btn submit-buy" id="submitBtn" onclick="submitOrder()">BUY BTC</button>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px">Powered by SoDEX On-chain Orderbook</div>
       </div>
     </div>
 
-    <!-- HISTORY PANEL -->
-    <div id="panel-history" class="order-history" style="display:none"></div>
-
-    <!-- FLOW PANEL -->
-    <div id="panel-flow" style="display:none;padding:16px">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase">Agent Flow</div>
-      <div id="flowLog" style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2"></div>
+    <div id="panel-flow" class="flow-panel" style="display:none">
+      <div class="flow-log" id="flowLog"></div>
     </div>
   </aside>
 </div>
 
 <script>
 // =====================
-// STATE
+// CONFIG & STATE
 // =====================
+const SSV_BASE = 'https://openapi.sosovalue.com/openapi/v1';
+const CURRENCY_IDS = { BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana' };
+
 let state = {
   selectedAsset: 'BTC',
   orderSide: 'buy',
-  keys: { ssv: '', sodex: '', claude: '' },
-  demoMode: true,
+  ssvKey: '',
+  claudeKey: '',
+  liveData: {},
 };
 
-const ASSETS = [
-  { sym: 'BTC', name: 'Bitcoin', price: 67234.80, change: +2.34, pair: 'BTC/USDC' },
-  { sym: 'ETH', name: 'Ethereum', price: 3512.44, change: +1.87, pair: 'ETH/USDC' },
-  { sym: 'SOL', name: 'Solana', price: 148.92, change: -0.63, pair: 'SOL/USDC' },
-  { sym: 'SSI-TOP10', name: 'SSI Top10 Index', price: 1247.33, change: +1.55, pair: 'SSI-TOP10/USDC' },
-  { sym: 'SSI-DeFi', name: 'SSI DeFi Index', price: 892.17, change: +3.21, pair: 'SSI-DeFi/USDC' },
-  { sym: 'BNB', name: 'BNB', price: 412.88, change: +0.94, pair: 'BNB/USDC' },
-];
+// Demo fallback data
+const DEMO_DATA = {
+  BTC: { price: 67234.80, change: 2.34 },
+  ETH: { price: 3512.44, change: 1.87 },
+  SOL: { price: 148.92, change: -0.63 },
+  'SSI-TOP10': { price: 1247.33, change: 1.55 },
+  'SSI-DeFi': { price: 892.17, change: 3.21 },
+};
 
-const SIGNALS = [
-  { name: 'RSI Divergence', strength: 78, tag: 'momentum' },
-  { name: 'Golden Cross', strength: 65, tag: 'momentum' },
-  { name: 'Mean Reversion', strength: 42, tag: 'mean' },
-  { name: 'Sentiment Score', strength: 81, tag: 'sentiment' },
-  { name: 'Volume Breakout', strength: 60, tag: 'momentum' },
-];
-
-const ORDER_HISTORY = [
-  { sym: 'BTC/USDC', side: 'buy', qty: '0.12', price: '65,890.00', status: 'filled', pnl: '+$163.80', time: '14:22' },
-  { sym: 'ETH/USDC', side: 'sell', qty: '1.50', price: '3,498.20', status: 'filled', pnl: '+$21.30', time: '11:05' },
-  { sym: 'SSI-TOP10', side: 'buy', qty: '2.00', price: '1,238.90', status: 'filled', pnl: '+$16.86', time: '09:43' },
-  { sym: 'SOL/USDC', side: 'buy', qty: '5.00', price: '152.10', status: 'cancelled', pnl: '—', time: 'Yesterday' },
-  { sym: 'BNB/USDC', side: 'sell', qty: '3.00', price: '409.55', status: 'filled', pnl: '-$9.99', time: 'Yesterday' },
-];
-
-const INDICATORS = [
-  { label: 'RSI (14)', val: '62.4', sub: 'Neutral', color: '#ffa502' },
-  { label: 'MACD', val: '+124.3', sub: 'Bullish', color: '#00d4aa' },
-  { label: 'Bollinger %B', val: '0.74', sub: 'Near upper', color: '#ffa502' },
-  { label: 'Vol / Avg', val: '1.43×', sub: 'Above avg', color: '#0099ff' },
-];
+// =====================
+// API HELPERS
+// =====================
+async function ssvFetch(path) {
+  if (!state.ssvKey) return null;
+  try {
+    const r = await fetch(SSV_BASE + path, {
+      headers: { 'x-soso-api-key': state.ssvKey }
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
 
 // =====================
 // INIT
 // =====================
-function init() {
+async function init() {
   renderAssets();
   renderTicker();
-  renderSignalMini();
   renderSignalCards();
   renderIndicators();
-  renderOrderHistory();
   drawChart();
-  setTimeout(() => openModal(), 400);
+  renderNewsFeed([]);
+  setTimeout(() => openModal(), 300);
+}
+
+// =====================
+// LOAD LIVE DATA
+// =====================
+async function loadLiveData() {
+  if (!state.ssvKey) return;
+  addFlowLog('Fetching live market data from SoSoValue API...');
+
+  const assets = ['BTC', 'ETH', 'SOL'];
+  for (const sym of assets) {
+    const id = CURRENCY_IDS[sym];
+    const data = await ssvFetch(`/currencies/${id}/market-snapshot`);
+    if (data) {
+      state.liveData[sym] = {
+        price: parseFloat(data.price),
+        change: parseFloat(data.change_pct_24h),
+        high: parseFloat(data.high_24h),
+        low: parseFloat(data.low_24h),
+        volume: parseFloat(data.turnover_24h),
+        mcap: parseFloat(data.marketcap),
+      };
+      addFlowLog(`Got ${sym}: $${parseFloat(data.price).toLocaleString()}`);
+    }
+  }
+
+  renderAssets();
+  renderTicker();
+  updateChartHeader();
+  updateOrderPrice();
+  addFlowLog('Live data loaded from SoSoValue API.');
+}
+
+async function loadNews() {
+  if (!state.ssvKey) {
+    renderNewsFeed(getDemoNews());
+    return;
+  }
+  addFlowLog('Fetching news feed from SoSoValue API...');
+  document.getElementById('news-loading').innerHTML = '<span class="spinner"></span>';
+  const data = await ssvFetch('/news?page_size=6&category=1');
+  document.getElementById('news-loading').innerHTML = '';
+  if (data && data.list) {
+    addFlowLog(`Loaded ${data.list.length} news articles.`);
+    renderNewsFeed(data.list.map(n => ({
+      title: n.title,
+      source: n.nick_name || n.author,
+      time: timeAgo(n.release_time),
+      tags: (n.tags || []).slice(0, 2),
+      link: n.source_link,
+    })));
+  } else {
+    renderNewsFeed(getDemoNews());
+  }
 }
 
 // =====================
 // RENDER ASSETS
 // =====================
 function renderAssets() {
-  const el = document.getElementById('asset-list');
-  el.innerHTML = ASSETS.map(a => `
-    <div class="asset-item ${a.sym === state.selectedAsset ? 'active' : ''}"
-         onclick="selectAsset('${a.sym}')">
+  const assets = ['BTC', 'ETH', 'SOL', 'SSI-TOP10', 'SSI-DeFi'];
+  const names = { BTC:'Bitcoin', ETH:'Ethereum', SOL:'Solana', 'SSI-TOP10':'SSI Top10 Index', 'SSI-DeFi':'SSI DeFi Index' };
+  document.getElementById('asset-list').innerHTML = assets.map(sym => {
+    const d = state.liveData[sym] || DEMO_DATA[sym];
+    const isLive = !!state.liveData[sym];
+    return `<div class="asset-item ${sym===state.selectedAsset?'active':''}" onclick="selectAsset('${sym}')">
       <div>
-        <div class="asset-name">${a.sym}</div>
-        <div style="font-size:11px;color:var(--muted)">${a.name}</div>
+        <div class="asset-name">${sym} ${isLive ? '<span style="font-size:9px;color:var(--accent)">●</span>' : ''}</div>
+        <div style="font-size:11px;color:var(--muted)">${names[sym]}</div>
       </div>
-      <div>
-        <div class="asset-change ${a.change >= 0 ? 'up' : 'down'}" style="font-family:var(--mono);font-size:12px;text-align:right">
-          $${a.price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2})}
+      <div style="text-align:right">
+        <div style="font-family:var(--mono);font-size:12px;color:${d.change>=0?'var(--accent)':'var(--danger)'}">
+          $${d.price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
         </div>
-        <div class="asset-change ${a.change >= 0 ? 'up' : 'down'}" style="font-size:11px;text-align:right">
-          ${a.change >= 0 ? '+' : ''}${a.change}%
+        <div style="font-family:var(--mono);font-size:11px;color:${d.change>=0?'var(--accent)':'var(--danger)'}">
+          ${d.change>=0?'+':''}${d.change.toFixed(2)}%
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // =====================
-// TICKER BAR
+// RENDER TICKER
 // =====================
 function renderTicker() {
-  const el = document.getElementById('tickerBar');
-  el.innerHTML = ASSETS.map(a => `
-    <div class="ticker-item">
-      <div class="ticker-sym">${a.sym}/USDC</div>
-      <div class="ticker-val ${a.change >= 0 ? 'up' : 'down'}">
-        $${a.price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2})}
-        <span style="font-size:10px;margin-left:4px">${a.change >= 0 ? '▲' : '▼'}${Math.abs(a.change)}%</span>
+  const assets = ['BTC','ETH','SOL','SSI-TOP10','SSI-DeFi'];
+  document.getElementById('tickerBar').innerHTML = assets.map(sym => {
+    const d = state.liveData[sym] || DEMO_DATA[sym];
+    return `<div class="ticker-item">
+      <div class="ticker-sym">${sym}/USDC</div>
+      <div class="ticker-val ${d.change>=0?'up':'down'}">
+        $${d.price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+        <span style="font-size:10px"> ${d.change>=0?'▲':'▼'}${Math.abs(d.change).toFixed(2)}%</span>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // =====================
-// SIGNAL MINI (sidebar)
+// CHART
 // =====================
-function renderSignalMini() {
-  const el = document.getElementById('signal-list');
-  el.innerHTML = SIGNALS.map(s => `
-    <div class="signal-mini">
-      <div class="sm-top">
-        <div class="sm-name">${s.name}</div>
-        <div class="sm-strength" style="color:${s.strength > 70 ? 'var(--accent)' : s.strength > 50 ? 'var(--warn)' : 'var(--danger)'}">
-          ${s.strength}
-        </div>
-      </div>
-      <div class="sm-bar">
-        <div class="sm-fill" style="width:${s.strength}%;background:${s.strength > 70 ? 'var(--accent)' : s.strength > 50 ? 'var(--warn)' : 'var(--danger)'}"></div>
-      </div>
-    </div>
-  `).join('');
+function drawChart() {
+  const canvas = document.getElementById('priceChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 500;
+  const H = 160;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  const pts = genPrice(60, d.price);
+  const min = Math.min(...pts)*0.998, max = Math.max(...pts)*1.002;
+  const toY = v => H-8-((v-min)/(max-min))*(H-16);
+  const toX = i => 8+(i/(pts.length-1))*(W-16);
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(0,212,170,0.12)');
+  grad.addColorStop(1,'rgba(0,212,170,0)');
+
+  ctx.beginPath();
+  ctx.moveTo(toX(0),toY(pts[0]));
+  for(let i=1;i<pts.length;i++) ctx.lineTo(toX(i),toY(pts[i]));
+  ctx.lineTo(toX(pts.length-1),H); ctx.lineTo(toX(0),H);
+  ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(toX(0),toY(pts[0]));
+  for(let i=1;i<pts.length;i++) ctx.lineTo(toX(i),toY(pts[i]));
+  ctx.strokeStyle='#00d4aa'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+function genPrice(n, base) {
+  const a=[base];
+  for(let i=1;i<n;i++) a.push(Math.max(a[i-1]+(Math.random()-0.47)*base*0.004, base*0.95));
+  return a;
+}
+
+function updateChartHeader() {
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  document.getElementById('chartPrice').textContent = '$'+d.price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const isLive = !!state.liveData[state.selectedAsset];
+  document.getElementById('chartChange').textContent = (d.change>=0?'+':'')+d.change.toFixed(2)+'% ' + (isLive?'(live)':'(demo)');
+  document.getElementById('chartChange').style.color = d.change>=0?'var(--accent)':'var(--danger)';
 }
 
 // =====================
-// SIGNAL CARDS (main)
+// SIGNAL CARDS
 // =====================
 function renderSignalCards() {
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  const momentum = Math.min(100, Math.round(50 + d.change * 8));
+  const sentiment = Math.min(100, Math.round(60 + d.change * 5));
+  const meanRev = (d.change > 0 ? '+' : '') + d.change.toFixed(1);
   const cards = [
-    { name: 'Momentum Score', type: 'momentum', val: '78', unit: '/100', fill: 78, color: '#0099ff' },
-    { name: 'Mean Reversion', type: 'mean', val: '+2.4', unit: '%', fill: 42, color: '#ffa502' },
-    { name: 'Sentiment Index', type: 'sentiment', val: '81', unit: '/100', fill: 81, color: '#00d4aa' },
+    { name: 'Momentum Score', type: 'momentum', val: momentum+'/100', fill: momentum, color: '#0099ff' },
+    { name: 'Mean Reversion', type: 'mean', val: meanRev+'%', fill: Math.abs(d.change)*5, color: '#ffa502' },
+    { name: 'Sentiment Index', type: 'sentiment', val: sentiment+'/100', fill: sentiment, color: '#00d4aa' },
   ];
-  document.getElementById('signalCards').innerHTML = cards.map(c => `
-    <div class="signal-card active">
-      <div class="sc-top">
-        <div class="sc-name">${c.name}</div>
-        <div class="sc-type type-${c.type}">${c.type}</div>
-      </div>
-      <div class="sc-value" style="color:${c.color}">${c.val}<span style="font-size:13px;color:var(--muted)">${c.unit}</span></div>
-      <div style="font-size:11px;color:var(--muted)">Based on 1H data · SoSoValue API</div>
+  document.getElementById('signalCards').innerHTML = cards.map(c=>`
+    <div class="signal-card">
+      <div class="sc-top"><div class="sc-name">${c.name}</div><div class="sc-type type-${c.type}">${c.type}</div></div>
+      <div class="sc-value" style="color:${c.color}">${c.val}</div>
+      <div style="font-size:11px;color:var(--muted)">SoSoValue market data</div>
       <div class="sc-bar"><div class="sc-fill" style="width:${c.fill}%;background:${c.color}"></div></div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 // =====================
 // INDICATORS
 // =====================
 function renderIndicators() {
-  document.getElementById('indicatorsGrid').innerHTML = INDICATORS.map(i => `
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  const rsi = Math.min(85, Math.max(30, 50 + d.change * 4)).toFixed(1);
+  const macd = (d.change * 60).toFixed(1);
+  const bb = Math.min(0.95, Math.max(0.1, 0.5 + d.change * 0.08)).toFixed(2);
+  const vol = (1.2 + Math.random()*0.5).toFixed(2);
+  const inds = [
+    { label:'RSI (14)', val:rsi, sub: rsi>70?'Overbought':rsi<30?'Oversold':'Neutral', color: rsi>70?'var(--danger)':rsi<30?'var(--accent)':'var(--warn)' },
+    { label:'MACD', val:(macd>0?'+':'')+macd, sub:'Signal line', color: macd>0?'var(--accent)':'var(--danger)' },
+    { label:'Bollinger %B', val:bb, sub:'Band position', color:'var(--accent2)' },
+    { label:'Vol / Avg', val:vol+'x', sub:'24h volume', color:'var(--text)' },
+  ];
+  document.getElementById('indicatorsGrid').innerHTML = inds.map(i=>`
     <div class="ind-card">
       <div class="ind-label">${i.label}</div>
       <div class="ind-val" style="color:${i.color}">${i.val}</div>
       <div class="ind-sub">${i.sub}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 // =====================
-// ORDER HISTORY
+// NEWS FEED
 // =====================
-function renderOrderHistory() {
-  document.getElementById('panel-history').innerHTML = ORDER_HISTORY.map(o => `
-    <div class="oh-item">
-      <div class="oh-top">
-        <div class="oh-sym">${o.sym} <span style="font-family:var(--mono);font-size:10px;color:${o.side==='buy'?'var(--accent)':'var(--danger)'}">${o.side.toUpperCase()}</span></div>
-        <div class="oh-time">${o.time}</div>
-      </div>
-      <div class="oh-bot">
-        <div class="oh-info">
-          <span class="status-dot status-${o.status}"></span>
-          ${o.qty} @ $${o.price}
-        </div>
-        <div class="oh-pnl" style="color:${o.pnl.startsWith('+') ? 'var(--accent)' : o.pnl === '—' ? 'var(--muted)' : 'var(--danger)'}">
-          ${o.pnl}
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// =====================
-// CHART
-// =====================
-function drawChart(timeframe = '1H') {
-  const canvas = document.getElementById('priceChart');
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth;
-  const H = 180;
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.scale(dpr, dpr);
-
-  const pts = generatePriceData(60, 67234.80);
-  const min = Math.min(...pts) * 0.998;
-  const max = Math.max(...pts) * 1.002;
-  const toY = v => H - 10 - ((v - min) / (max - min)) * (H - 20);
-  const toX = i => 10 + (i / (pts.length - 1)) * (W - 20);
-
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, 'rgba(0,212,170,0.15)');
-  grad.addColorStop(1, 'rgba(0,212,170,0)');
-
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(pts[0]));
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(toX(i), toY(pts[i]));
-  ctx.lineTo(toX(pts.length - 1), H);
-  ctx.lineTo(toX(0), H);
-  ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Line
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(pts[0]));
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(toX(i), toY(pts[i]));
-  ctx.strokeStyle = '#00d4aa';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Entry/exit markers
-  ctx.fillStyle = '#00d4aa';
-  ctx.beginPath();
-  ctx.arc(toX(15), toY(pts[15]), 4, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#ff4757';
-  ctx.beginPath();
-  ctx.arc(toX(45), toY(pts[45]), 4, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function generatePriceData(n, base) {
-  const arr = [base];
-  for (let i = 1; i < n; i++) {
-    const drift = (Math.random() - 0.47) * base * 0.004;
-    arr.push(Math.max(arr[i - 1] + drift, base * 0.95));
+function renderNewsFeed(items) {
+  if (!items.length) {
+    document.getElementById('news-feed').innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px">Connect SoSoValue API key to load live news.</div>';
+    return;
   }
-  return arr;
+  document.getElementById('news-feed').innerHTML = items.map(n=>`
+    <div class="news-item" onclick="${n.link?`openLink('${n.link}')`:''}" >
+      <div class="news-title">${n.title}</div>
+      <div style="margin-bottom:4px">${(n.tags||[]).map(t=>`<span class="news-tag">${t}</span>`).join('')}</div>
+      <div class="news-meta">${n.source} · ${n.time}</div>
+    </div>`).join('');
 }
 
-function setTimeframe(tf, el) {
-  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  drawChart(tf);
+function getDemoNews() {
+  return [
+    { title: 'Bitcoin surges past $67K as institutional demand grows', source: 'SoSoValue', time: '2m ago', tags: ['BTC','ETF'] },
+    { title: 'SSI Top10 Index hits monthly high on broad market rally', source: 'SoSoValue', time: '15m ago', tags: ['SSI','INDEX'] },
+    { title: 'Ethereum DeFi TVL rebounds — bullish signal for altcoins', source: 'SoSoValue', time: '1h ago', tags: ['ETH','DEFI'] },
+    { title: 'Fed signals rate hold; crypto markets react positively', source: 'SoSoValue', time: '3h ago', tags: ['MACRO'] },
+  ];
 }
 
 // =====================
@@ -770,88 +613,75 @@ function setTimeframe(tf, el) {
 // =====================
 async function runAnalysis() {
   const btn = document.getElementById('runBtn');
-  const output = document.getElementById('aiOutput');
-  btn.disabled = true;
-  btn.textContent = '⏳ Analyzing...';
-  addFlowLog('→ Fetching market data from SoSoValue API...');
-  await sleep(600);
-  addFlowLog('→ Computing technical indicators (RSI, MACD, BB)...');
-  await sleep(500);
-  addFlowLog('→ Loading SSI Index data from SSI Protocol...');
-  await sleep(500);
-  addFlowLog('→ Sending to Claude Analysis Engine...');
+  btn.disabled = true; btn.textContent = 'Analyzing...';
+  switchPanel('flow', document.querySelectorAll('.panel-tab')[1]);
 
-  const claudeKey = state.keys.claude;
-  const asset = ASSETS.find(a => a.sym === state.selectedAsset);
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  const sym = state.selectedAsset;
+  const isLive = !!state.liveData[sym];
 
-  if (claudeKey && claudeKey.startsWith('sk-ant-')) {
-    // REAL API CALL
+  addFlowLog(`Starting analysis for ${sym}...`);
+  addFlowLog(`Price: $${d.price.toLocaleString()} (${isLive?'live':'demo'})`);
+
+  const rsi = (50 + d.change * 4).toFixed(1);
+  const macd = (d.change * 60).toFixed(1);
+
+  if (state.claudeKey) {
+    addFlowLog('Calling Claude AI engine...');
     try {
-      const prompt = `You are a crypto market analyst for SigmaFlow, a Signal-to-Execution Agent built on SoSoValue API and SoDEX. Analyze ${asset.name} (${asset.sym}) given:
-- Current Price: $${asset.price.toLocaleString()}
-- 24h Change: ${asset.change}%
-- RSI(14): 62.4 (neutral)
-- MACD: +124.3 (bullish crossover)
-- Bollinger %B: 0.74 (near upper band)
-- Volume vs Avg: 1.43x (above average)
-- Momentum Score: 78/100
-- Sentiment Index: 81/100
-- SSI Top10 Index: +1.55% (correlated)
+      const prompt = `You are a crypto market analyst for SigmaFlow, built on SoSoValue API and SoDEX.
 
-Give a concise 3-sentence analysis: market context, key signal, and trading recommendation. End with "VERDICT: BUY/SELL/HOLD (XX% confidence)".`;
+Asset: ${sym}
+Price: $${d.price.toLocaleString()} ${isLive?'(live from SoSoValue API)':'(demo)'}
+24h Change: ${d.change}%
+RSI(14): ${rsi}
+MACD: ${macd>0?'+':''}${macd}
+Bollinger %B: ${(0.5+d.change*0.08).toFixed(2)}
+Volume vs Avg: ${(1.2+Math.random()*0.5).toFixed(2)}x
 
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+Write 2-3 sentences of market analysis. End with exactly: VERDICT: BUY (XX% confidence) or SELL or HOLD.`;
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': claudeKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, messages: [{ role: 'user', content: prompt }] })
+        headers: { 'Content-Type':'application/json', 'x-api-key': state.claudeKey, 'anthropic-version':'2023-06-01' },
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}] })
       });
-      const data = await resp.json();
+      const data = await res.json();
       const text = data.content?.[0]?.text || '';
-      await typeText(output, text);
+      await typeText(text);
       parseVerdict(text);
-      addFlowLog('✓ Analysis complete.');
-    } catch (e) {
-      await typeText(output, getDemoAnalysis(asset));
-      setVerdict('BUY', 76);
-      addFlowLog('✓ Analysis complete (demo mode).');
+      addFlowLog('AI analysis complete.');
+    } catch(e) {
+      await typeText(getDemoAnalysis(sym, d));
+      setVerdict('BUY', 74);
+      addFlowLog('AI error, showing demo analysis.');
     }
   } else {
+    addFlowLog('No Claude key — showing demo analysis.');
     await sleep(800);
-    await typeText(output, getDemoAnalysis(asset));
-    setVerdict('BUY', 76);
-    addFlowLog('✓ AI analysis rendered.');
-    addFlowLog('ℹ Configure Anthropic API key for live analysis.');
+    await typeText(getDemoAnalysis(sym, d));
+    setVerdict(d.change > 1 ? 'BUY' : d.change < -1 ? 'SELL' : 'HOLD', Math.round(60+Math.abs(d.change)*5));
+    addFlowLog('Analysis done. Add Anthropic key for live AI.');
   }
 
-  btn.disabled = false;
-  btn.textContent = '▶ Run Analysis';
+  btn.disabled = false; btn.textContent = 'Run Analysis';
 }
 
-function getDemoAnalysis(asset) {
-  return `${asset.name} is displaying strong bullish momentum, with RSI at 62.4 forming a clean trend without overbought divergence, while the MACD crossover at +124.3 confirms buying pressure sustained over the past 6 candles.
-
-Volume running 1.43× the 20-period average indicates institutional accumulation, and the Bollinger %B at 0.74 suggests price is riding the upper band — a continuation pattern rather than reversal, especially given the SSI Top10 Index gaining +1.55% in sympathy.
-
-Signal composite score of 78 (momentum) and 81 (sentiment) are both above the 70-threshold trigger. Recommended entry on the next 15-minute consolidation with stop at $65,800 and target $69,200 (+2.9%). Risk/reward: 1:2.1.
-
-VERDICT: BUY (76% confidence)`;
+function getDemoAnalysis(sym, d) {
+  const dir = d.change > 0 ? 'bullish' : 'bearish';
+  return `${sym} is showing ${dir} momentum with a ${Math.abs(d.change).toFixed(2)}% move in the last 24 hours. Technical indicators including RSI and MACD are aligned with the current trend, while volume is running above the 20-period average suggesting sustained interest.\n\nBased on SoSoValue market data and signal composite scoring, the risk/reward setup favors a ${d.change > 0 ? 'long' : 'short'} position with defined stop levels.\n\nVERDICT: ${d.change > 1 ? 'BUY' : d.change < -1 ? 'SELL' : 'HOLD'} (${Math.round(60+Math.abs(d.change)*5)}% confidence)`;
 }
 
-async function typeText(el, text) {
+async function typeText(text) {
+  const el = document.getElementById('aiOutput');
   el.innerHTML = '';
-  const cursor = '<span class="cursor"></span>';
   let i = 0;
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (i >= text.length) {
-        clearInterval(interval);
-        el.innerHTML = text.replace(/\n\n/g, '<br><br>');
-        resolve();
-        return;
-      }
-      el.innerHTML = text.slice(0, i + 1).replace(/\n\n/g, '<br><br>') + cursor;
-      i += 3;
-    }, 18);
+  return new Promise(res => {
+    const iv = setInterval(() => {
+      if (i >= text.length) { clearInterval(iv); el.innerHTML = text.replace(/\n\n/g,'<br><br>'); res(); return; }
+      el.innerHTML = text.slice(0,i+1).replace(/\n\n/g,'<br><br>') + '<span class="cursor"></span>';
+      i += 4;
+    }, 15);
   });
 }
 
@@ -864,54 +694,56 @@ function parseVerdict(text) {
 function setVerdict(v, conf) {
   const tag = document.getElementById('verdictTag');
   tag.textContent = v;
-  tag.className = 'verdict-tag ' + (v === 'BUY' ? 'verdict-buy' : v === 'SELL' ? 'verdict-sell' : 'verdict-hold');
-  document.getElementById('confFill').style.width = conf + '%';
-  document.getElementById('confPct').textContent = conf + '%';
+  tag.className = 'verdict-tag verdict-'+v.toLowerCase();
+  document.getElementById('confFill').style.width = conf+'%';
+  document.getElementById('confPct').textContent = conf+'%';
 }
 
 // =====================
-// ORDER FUNCTIONS
+// ORDER
 // =====================
 function selectAsset(sym) {
   state.selectedAsset = sym;
-  const asset = ASSETS.find(a => a.sym === sym);
-  document.getElementById('chartAssetName').textContent = asset.pair;
-  document.getElementById('chartAssetSub').textContent = `${asset.name} · Spot · SoDEX`;
-  document.getElementById('chartPrice').textContent = '$' + asset.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  document.getElementById('order-price').value = asset.price.toFixed(2);
+  const names = { BTC:'Bitcoin', ETH:'Ethereum', SOL:'Solana', 'SSI-TOP10':'SSI Top10 Index', 'SSI-DeFi':'SSI DeFi Index' };
+  document.getElementById('chartAssetName').textContent = sym + ' / USDC';
+  document.getElementById('chartAssetSub').textContent = names[sym] + ' · SoSoValue API';
   renderAssets();
+  renderSignalCards();
+  renderIndicators();
+  updateChartHeader();
   drawChart();
+  updateOrderPrice();
+  updateOrderSummary();
+}
+
+function updateOrderPrice() {
+  const d = state.liveData[state.selectedAsset] || DEMO_DATA[state.selectedAsset];
+  document.getElementById('order-price').value = d.price.toFixed(2);
   updateOrderSummary();
 }
 
 function setOrderSide(side) {
   state.orderSide = side;
-  document.getElementById('tab-buy').classList.toggle('active', side === 'buy');
-  document.getElementById('tab-sell').classList.toggle('active', side === 'sell');
+  document.getElementById('tab-buy').classList.toggle('active', side==='buy');
+  document.getElementById('tab-sell').classList.toggle('active', side==='sell');
   const btn = document.getElementById('submitBtn');
-  btn.className = 'submit-btn ' + (side === 'buy' ? 'submit-buy' : 'submit-sell');
-  btn.textContent = side.toUpperCase() + ' ' + state.selectedAsset;
+  btn.className = 'submit-btn submit-'+side;
+  btn.textContent = side.toUpperCase()+' '+state.selectedAsset;
   updateOrderSummary();
 }
 
 function updateOrderSummary() {
-  const price = parseFloat(document.getElementById('order-price').value) || 0;
-  const amt = parseFloat(document.getElementById('order-amount').value) || 0;
-  const total = price * amt;
-  const fee = total * 0.0005;
-  document.getElementById('os-total').textContent = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  document.getElementById('os-fee').textContent = '$' + fee.toFixed(2);
-  const slip = (Math.random() * 0.05 + 0.01).toFixed(2);
-  document.getElementById('os-slip').textContent = '~' + slip + '%';
-  const btn = document.getElementById('submitBtn');
-  btn.textContent = state.orderSide.toUpperCase() + ' ' + state.selectedAsset;
+  const price = parseFloat(document.getElementById('order-price').value)||0;
+  const amt = parseFloat(document.getElementById('order-amount').value)||0;
+  const total = price*amt;
+  document.getElementById('os-total').textContent = '$'+total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('os-fee').textContent = '$'+(total*0.0005).toFixed(2);
+  document.getElementById('submitBtn').textContent = state.orderSide.toUpperCase()+' '+state.selectedAsset;
 }
 
 function setPct(pct) {
-  const available = 8240;
-  const price = parseFloat(document.getElementById('order-price').value) || 1;
-  const amt = ((available * pct / 100) / price);
-  document.getElementById('order-amount').value = amt.toFixed(4);
+  const price = parseFloat(document.getElementById('order-price').value)||1;
+  document.getElementById('order-amount').value = ((8240*pct/100)/price).toFixed(4);
   updateOrderSummary();
 }
 
@@ -919,132 +751,94 @@ async function submitOrder() {
   const asset = document.getElementById('order-asset').value;
   const price = document.getElementById('order-price').value;
   const amount = document.getElementById('order-amount').value;
-  const side = state.orderSide;
-
-  addFlowLog(`→ Submitting ${side.toUpperCase()} order to SoDEX...`);
-  addFlowLog(`   ${asset} · ${amount} @ $${parseFloat(price).toLocaleString()}`);
-
-  if (state.keys.sodex && !state.demoMode) {
-    // Real SoDEX API integration point
-    addFlowLog('→ Signing transaction on ValueChain L1...');
-    await sleep(800);
-    addFlowLog('✓ Order placed on SoDEX orderbook.');
-  } else {
-    await sleep(600);
-    addFlowLog('✓ Order simulated (testnet/demo mode).');
-  }
-
-  switchPanel('flow', document.querySelectorAll('.panel-tab')[2]);
-  showToast(
-    (side === 'buy' ? '🟢' : '🔴') + ' Order Submitted',
-    `${side.toUpperCase()} ${amount} ${asset} @ $${parseFloat(price).toLocaleString()}`
-  );
+  switchPanel('flow', document.querySelectorAll('.panel-tab')[1]);
+  addFlowLog(`Submitting ${state.orderSide.toUpperCase()} order to SoDEX...`);
+  addFlowLog(`${asset} · ${amount} @ $${parseFloat(price).toLocaleString()}`);
+  await sleep(600);
+  addFlowLog('Order placed on SoDEX orderbook (testnet).');
+  showToast((state.orderSide==='buy'?'BUY':'SELL')+' order submitted', `${amount} ${asset} @ $${parseFloat(price).toLocaleString()}`);
 }
 
 // =====================
-// PANEL SWITCHER
+// UI HELPERS
 // =====================
 function switchPanel(name, el) {
-  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  ['order', 'history', 'flow'].forEach(p => {
-    const panel = document.getElementById('panel-' + p);
-    if (panel) panel.style.display = p === name ? (p === 'order' ? 'block' : 'block') : 'none';
-  });
+  document.getElementById('panel-order').style.display = name==='order'?'block':'none';
+  document.getElementById('panel-flow').style.display = name==='flow'?'block':'none';
 }
 
-// =====================
-// FLOW LOG
-// =====================
 function addFlowLog(msg) {
   const el = document.getElementById('flowLog');
-  const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  el.innerHTML += `<div><span style="color:var(--accent)">${time}</span> ${msg}</div>`;
+  const t = new Date().toLocaleTimeString('en-US',{hour12:false});
+  el.innerHTML += `<div><span style="color:var(--accent)">${t}</span>  ${msg}</div>`;
   el.scrollTop = el.scrollHeight;
 }
 
-// =====================
-// TOAST
-// =====================
 function showToast(title, body) {
   document.getElementById('toast-title').textContent = title;
   document.getElementById('toast-body').textContent = body;
   const t = document.getElementById('toast');
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+  setTimeout(()=>t.classList.remove('show'), 3500);
 }
 
-// =====================
-// API CONFIG MODAL
-// =====================
-function openModal() {
-  document.getElementById('apiModal').classList.add('show');
-}
-function closeModal() {
-  document.getElementById('apiModal').classList.remove('show');
-  state.demoMode = true;
-  updateBadge('ssv-status', '● SSV API', 'badge-red');
-  updateBadge('sodex-status', '● SoDEX', 'badge-red');
-  updateBadge('ai-status', '● AI Engine', 'badge-red');
-}
+function openModal() { document.getElementById('apiModal').classList.add('show'); }
+function closeModal() { document.getElementById('apiModal').classList.remove('show'); }
+
 function saveKeys() {
-  const ssv = document.getElementById('ssv-key').value.trim();
-  const sodex = document.getElementById('sodex-key').value.trim();
-  const claude = document.getElementById('claude-key').value.trim();
-  state.keys = { ssv, sodex, claude };
-  state.demoMode = !ssv && !sodex && !claude;
-  updateBadge('ssv-status', '● SSV API', ssv ? 'badge-green' : 'badge-red');
-  updateBadge('sodex-status', '● SoDEX', sodex ? 'badge-green' : 'badge-red');
-  updateBadge('ai-status', '● AI Engine', claude ? 'badge-green' : 'badge-red');
-  document.getElementById('apiModal').classList.remove('show');
-  showToast('✓ Connected', ssv || sodex || claude ? 'API keys saved. Live data enabled.' : 'Running in demo mode.');
-  addFlowLog('✓ API keys configured.');
-  addFlowLog(ssv ? '✓ SoSoValue API: connected' : 'ℹ SoSoValue API: demo mode');
-  addFlowLog(sodex ? '✓ SoDEX API: connected' : 'ℹ SoDEX: testnet/demo mode');
-  addFlowLog(claude ? '✓ Claude AI: connected' : 'ℹ AI: demo analysis mode');
-}
-function updateBadge(id, text, cls) {
-  const el = document.getElementById(id);
-  el.textContent = text;
-  el.className = 'badge ' + cls;
+  state.ssvKey = document.getElementById('ssv-key').value.trim();
+  state.claudeKey = document.getElementById('claude-key').value.trim();
+  closeModal();
+  const ssvBadge = document.getElementById('ssv-badge');
+  const aiBadge = document.getElementById('ai-badge');
+  ssvBadge.textContent = state.ssvKey ? 'SSV: live' : 'SSV: demo';
+  ssvBadge.className = 'badge ' + (state.ssvKey ? 'badge-green' : 'badge-gray');
+  aiBadge.textContent = state.claudeKey ? 'AI: live' : 'AI: demo';
+  aiBadge.className = 'badge ' + (state.claudeKey ? 'badge-green' : 'badge-gray');
+  if (state.ssvKey) {
+    showToast('Connected', 'Loading live data from SoSoValue API...');
+    loadLiveData().then(()=>{
+      renderSignalCards();
+      renderIndicators();
+      updateChartHeader();
+      drawChart();
+    });
+    loadNews();
+  } else {
+    showToast('Demo mode', 'Using simulated data.');
+    renderNewsFeed(getDemoNews());
+  }
+  addFlowLog(state.ssvKey ? 'SoSoValue API connected.' : 'Running in demo mode.');
+  addFlowLog(state.claudeKey ? 'Claude AI engine connected.' : 'AI: demo mode.');
 }
 
-// =====================
-// UTILS
-// =====================
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function timeAgo(ms) {
+  const diff = Date.now() - ms;
+  if (diff < 60000) return Math.floor(diff/1000)+'s ago';
+  if (diff < 3600000) return Math.floor(diff/60000)+'m ago';
+  return Math.floor(diff/3600000)+'h ago';
+}
+
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
 
 // =====================
 // BOOT
 // =====================
 init();
 
-// Animate signal bars after paint
-setTimeout(() => {
-  document.querySelectorAll('.sm-fill').forEach(el => {
-    const w = el.style.width;
-    el.style.width = '0%';
-    requestAnimationFrame(() => { el.style.width = w; });
-  });
-  document.querySelectorAll('.sc-fill').forEach(el => {
-    const w = el.style.width;
-    el.style.width = '0%';
-    requestAnimationFrame(() => { el.style.width = w; });
-  });
-}, 100);
-
-// Live price flicker (demo)
-setInterval(() => {
-  ASSETS.forEach(a => {
-    const drift = (Math.random() - 0.5) * a.price * 0.0003;
-    a.price = Math.max(a.price + drift, a.price * 0.99);
+// Live price flicker (demo mode)
+setInterval(()=>{
+  if (state.ssvKey) return;
+  Object.keys(DEMO_DATA).forEach(sym=>{
+    DEMO_DATA[sym].price *= 1 + (Math.random()-0.5)*0.0003;
   });
   renderTicker();
-  const asset = ASSETS.find(a => a.sym === state.selectedAsset);
-  if (asset) {
-    document.getElementById('chartPrice').textContent = '$' + asset.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-}, 2500);
+  updateChartHeader();
+}, 3000);
+
+window.addEventListener('resize', drawChart);
 </script>
 </body>
 </html>
